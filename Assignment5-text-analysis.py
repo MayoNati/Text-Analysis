@@ -23,7 +23,7 @@
 # ## Preceding Step - import modules (packages)
 # This step is necessary in order to use external modules (packages). <br/>
 
-# In[4]:
+# In[600]:
 
 
 # --------------------------------------
@@ -81,7 +81,7 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
 # ### Text analysis and String manipulation imports:
 
-# In[5]:
+# In[601]:
 
 
 # --------------------------------------
@@ -100,7 +100,7 @@ import re
 
 # #### (optional) Only if you didn't install Wordnet (for Hebrew) use:
 
-# In[6]:
+# In[602]:
 
 
 # word net installation:
@@ -110,7 +110,7 @@ get_ipython().system('pip install wn')
 get_ipython().system('python -m wn download omw-he:1.4')
 
 
-# In[7]:
+# In[603]:
 
 
 # word net import:
@@ -124,7 +124,7 @@ import wn
 
 # #### (optional) Only if you didn't install hebrew_tokenizer use:
 
-# In[8]:
+# In[604]:
 
 
 # Hebrew tokenizer installation:
@@ -133,7 +133,7 @@ import wn
 get_ipython().system('pip install hebrew_tokenizer')
 
 
-# In[9]:
+# In[605]:
 
 
 # Hebrew tokenizer import:
@@ -145,7 +145,7 @@ import hebrew_tokenizer as ht
 # ### Reading input files
 # Reading input files for train annotated corpus (raw text data) corpus and for the test corpus
 
-# In[10]:
+# In[606]:
 
 
 train_filename = 'annotated_corpus_for_train.csv'
@@ -154,14 +154,14 @@ df_train = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
 df_test  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
 
 
-# In[11]:
+# In[607]:
 
 
 df_train.head(8)
 df_train.shape
 
 
-# In[12]:
+# In[608]:
 
 
 df_test.head(3)
@@ -175,7 +175,7 @@ df_test.shape
 # 
 # 
 
-# In[13]:
+# In[609]:
 
 
 # YOUR CODE HERE
@@ -187,7 +187,7 @@ df_test.shape
 # # Step 1 - Getting to a basic classification:
 # **1.0** Change the classification of the species from m => 1 and f=> 0 in train data.
 # 
-# **1.1** Differences between 2 types of Vectorizers with only max_features = 10000 and 6 models by simply training without playing with any parameters tuning by using cross validation
+# **1.1** Differences between 2 types of Vectorizers and 6 models by simply training without playing with any parameters tuning by using cross validation
 # 
 # **Models**
 # 1. **KNN**
@@ -247,14 +247,14 @@ df_test.shape
 # **1.0** 
 # 
 
-# In[14]:
+# In[647]:
 
 
 df_train['gender'] = df_train['gender'].map({'f': 0, 'm': 1})
 df_train
 
 
-# In[481]:
+# In[648]:
 
 
 def clean_text(text):
@@ -267,7 +267,7 @@ def clean_text(text):
     return text
 
 
-# In[482]:
+# In[649]:
 
 
 def clean_english_words(text):
@@ -281,7 +281,7 @@ def clean_english_words(text):
     return text
 
 
-# In[483]:
+# In[650]:
 
 
 def VectorizerTypes(vectorizer,X_train,y_train):
@@ -305,7 +305,7 @@ def VectorizerTypes(vectorizer,X_train,y_train):
     return df_train_Vectorizer
 
 
-# In[488]:
+# In[614]:
 
 
 import time
@@ -351,7 +351,7 @@ def CrossValidation(dataset,model):
     return f1_male, f1_female, f1_avg, elapsed_time
 
 
-# In[489]:
+# In[615]:
 
 
 #  This function performs 10-fold cross-validation on the given dataset using the given vectorizers and models.
@@ -414,12 +414,11 @@ def performance_test_by_cross_validation(Vectorizers_types_dict, models_dict, X_
 
 # **1.1**
 
-# In[490]:
+# In[621]:
 
 
-max_features = 10000
-tfidf_Vectorizer_params = {"max_features": max_features,}
-Count_Vectorizer_params = {"max_features": max_features,}
+tfidf_Vectorizer_params = {}
+Count_Vectorizer_params = {}
 
 Vectorizers_types_dic = {
     "tfidf": {"func": TfidfVectorizer, "params": tfidf_Vectorizer_params},
@@ -436,7 +435,7 @@ models = {
 
 
 
-# In[491]:
+# In[622]:
 
 
 basic_crossVal_df=pd.DataFrame()
@@ -446,7 +445,7 @@ basic_crossVal_dict,basic_crossVal_df=performance_test_by_cross_validation(Vecto
 # This study examines the differences between two types of vectorizers, with a maximum of 10,000 features, and evaluates six machine learning models using cross-validation without any parameter tuning.
 # 
 
-# In[578]:
+# In[623]:
 
 
 basic_crossVal_df
@@ -454,7 +453,7 @@ basic_crossVal_df
 
 # **A graph depicting the average F1 scores for each model based on different vectorization methods.**
 
-# In[582]:
+# In[624]:
 
 
 #Create a bar chart from the DataFrame
@@ -485,7 +484,7 @@ def models_comparison_graph(df):
 
 
 
-# In[583]:
+# In[625]:
 
 
 models_comparison_graph(basic_crossVal_df)
@@ -497,7 +496,7 @@ models_comparison_graph(basic_crossVal_df)
 # 
 # For each model and vectorizer combination, the function initializes a pipeline, performs a grid search using the specified hyperparameters and F1 macro scoring metric, and stores the results in a DataFrame and two dictionaries. Finally, the function returns the stored results and prints the total elapsed time for the grid search.
 
-# In[495]:
+# In[626]:
 
 
 def grid_search_model_vectorizer(models, hyperparameters, vectorizers, Vectorizerparameters, X_train, y_train):
@@ -576,7 +575,7 @@ def grid_search_model_vectorizer(models, hyperparameters, vectorizers, Vectorize
     return combination_all_dict,combination_best_param_dict,df_total_scors_combination
 
 
-# In[496]:
+# In[627]:
 
 
 hyperparameters = {
@@ -626,7 +625,7 @@ Vectorizerparameters = {
 
 # **2.0**
 
-# In[500]:
+# In[628]:
 
 
 df_train_clean=pd.DataFrame()
@@ -639,7 +638,7 @@ dict_all,dict_best_param,df_total_scors_combination=grid_search_model_vectorizer
 
 
 
-# In[584]:
+# In[629]:
 
 
 df_total_scors_combination
@@ -647,7 +646,7 @@ df_total_scors_combination
 
 # These are the results of the best combinations for the models
 
-# In[585]:
+# In[630]:
 
 
 models_comparison_graph(df_total_scors_combination)
@@ -655,7 +654,7 @@ models_comparison_graph(df_total_scors_combination)
 
 # **2.1**
 
-# In[506]:
+# In[631]:
 
 
 df_train_temp['story']=df_train['story'].copy()
@@ -674,7 +673,7 @@ for model_name in list(dict_all.keys()):
 crossValidation_after_best_param
 
 
-# In[507]:
+# In[632]:
 
 
 print("This table displays the performance of all the models with their respective vectorizers, without any parameter tuning. The results are presented as the F1 score average.")
@@ -686,7 +685,7 @@ crossValidation_after_best_param
 
 # **We will now view a graph that illustrates the differences between models trained with their respective vectors without any adjustments, and models for which we found the best parameters that resulted in the highest F1 score average.**
 
-# In[509]:
+# In[633]:
 
 
 import seaborn as sns
@@ -713,7 +712,7 @@ print("-------------------------------------------------------------------------
 # If we see a bar that is colored **red**, it means that we did not observe any performance improvement between the models trained with default values and the ones trained after finding the best parameters
 # 
 
-# In[596]:
+# In[634]:
 
 
 import matplotlib.pyplot as plt
@@ -792,7 +791,7 @@ def results_comparison_graph(df1,text_df1,text_lagend_df1,df2,text_df2,text_lage
 
 # **2.2**
 
-# In[597]:
+# In[635]:
 
 
 text_df1=f'Comparison of training models with default parameters and models with optimized parameters based on their F1 average scores ({basic_crossVal_df.iloc[0].name})'
@@ -800,7 +799,7 @@ text_df2=f'Comparison of training models with default parameters and models with
 results_comparison_graph(basic_crossVal_df,text_df1,"Befor tuning parameters cross validation",crossValidation_after_best_param,text_df2,"After tuning parameters cross validation")
 
 
-# In[515]:
+# In[636]:
 
 
 import seaborn as sns
@@ -816,7 +815,7 @@ def results_comparison_graph_precent(df1,df2):
     plt.show()
 
 
-# In[516]:
+# In[637]:
 
 
 results_comparison_graph_precent(basic_crossVal_df,crossValidation_after_best_param)
@@ -824,7 +823,7 @@ results_comparison_graph_precent(basic_crossVal_df,crossValidation_after_best_pa
 
 # # Step 3 - Evaluate performance:
 
-# In[525]:
+# In[730]:
 
 
 #This function fits a model to the training data, predicts the gender for the test data, 
@@ -853,9 +852,69 @@ def train_and_evaluate_model(model_name, vectorizer, X_train, X_test, y_train, y
     return model_trained, f1_avg,f1_average_weighted ,accuracy
 
 
+# In[745]:
+
+
+def train_and_evaluate_for_all_models(summrize_table,X_train,X_test,y_train,y_test,preprocessing):
+    
+    print("---------------Basic param evaluate--------------------")
+
+    basic_model_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
+
+
+    for vector_name in list(Vectorizers_types_dic.keys()):  
+        vectorizer_pre=Vectorizers_types_dic[vector_name]["func"](**Vectorizers_types_dic[vector_name]["params"])
+
+        for model_name in list(models.keys()):
+            print(f"{model_name} - {vector_name}")
+            model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(models[model_name],vectorizer_pre,X_train,X_test,y_train,y_test)
+            basic_model_df.loc[vector_name, model_name] = f1_avg
+            pipeline = Pipeline(steps=[])
+            pipeline.steps.append((vector_name, vectorizer_pre))
+            pipeline.steps.append((model_name, models[model_name]))
+            new_row = {'models': model_name, 
+                       'Vector type': vector_name, 
+                       'f1 ave': f1_avg,
+                       'f1 ave weighted':f1_average_weighted,
+                       'Accuracy':accuracy,
+                       'params':pipeline,
+                       'preprocessing':preprocessing}
+            summrize_table.loc[len(summrize_table)] = new_row
+
+
+    basic_model_df
+
+    print("------------------------------------------------------")
+
+    print("---------------Best param evaluate--------------------")
+
+
+    X_train_split_temp, X_test_split_temp, y_train_split_temp, y_test_split_temp = train_test_split(df_train_temp['story'], df_train_temp['gender'], test_size=0.2, random_state=0)
+    after_tuning_model_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
+    for model_name in list(dict_all.keys()):
+        for vector_name in list(Vectorizers_types_dic.keys()):  
+            print(f"{model_name} - {vector_name}")
+
+            model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(dict_all[model_name][vector_name][1],dict_all[model_name][vector_name][0],X_train,X_test,y_train,y_test)        
+            after_tuning_model_df.loc[vector_name, model_name] = f1_avg
+            new_row = {'models': model_name, 
+                       'Vector type': vector_name, 
+                       'f1 ave': f1_avg,
+                       'f1 ave weighted':f1_average_weighted,
+                       'Accuracy':accuracy,
+                       'params':dict_all[model_name][vector_name],
+                       'preprocessing':preprocessing}
+            summrize_table.loc[len(summrize_table)] = new_row
+
+
+    after_tuning_model_df
+    
+    return basic_model_df,after_tuning_model_df
+
+
 # We will perform another comparison, this time on the actual prediction performance of our training data. The comparison will be between the default models and the models trained with the best parameters based on the f1 average score
 
-# In[544]:
+# In[764]:
 
 
 summrize_table=pd.DataFrame(columns=['models', 'Vector type', 'f1 ave','f1 ave weighted','Accuracy','params','preprocessing'])
@@ -865,143 +924,98 @@ summrize_table=pd.DataFrame(columns=['models', 'Vector type', 'f1 ave','f1 ave w
 
 # **With clean the text before**
 
-# In[545]:
+# In[765]:
 
 
-df_train_temp = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
-df_test_temp  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
-df_train_temp['gender'] = df_train_temp['gender'].map({'f': 0, 'm': 1})
-df_train_temp['story']=df_train_temp['story'].apply(clean_text)
-X_train_split_temp, X_test_split_temp, y_train_split_temp, y_test_split_temp = train_test_split(df_train_temp['story'], df_train_temp['gender'], test_size=0.2, random_state=0)
+df_train_clean = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
+df_test_clean  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
+df_train_clean['gender'] = df_train_clean['gender'].map({'f': 0, 'm': 1})
+df_train_clean['story']=df_train_clean['story'].apply(clean_text)
 
-basic_model_predict_evaluate_clean_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
-pipeline = Pipeline(steps=[])
+X_train_split_clean, X_test_split_clean, y_train_split_clean, y_test_split_clean = train_test_split(
+    df_train_clean['story'], 
+    df_train_clean['gender'], 
+    test_size=0.2, 
+    random_state=42)
 
-for vector_name in list(Vectorizers_types_dic.keys()):  
-    vectorizer_pre=Vectorizers_types_dic[vector_name]["func"](**Vectorizers_types_dic[vector_name]["params"])
-    
-    for model_name in list(models.keys()):
-        model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(models[model_name],vectorizer_pre,X_train_split_temp,X_test_split_temp,y_train_split_temp,y_test_split_temp)
-        basic_model_predict_evaluate_clean_df.loc[vector_name, model_name] = f1_avg
-        
-        pipeline.steps.append((vector_name, vectorizer_pre))
-        pipeline.steps.append((model_name, models[model_name]))
-        new_row = {'models': model_name, 
-                   'Vector type': vector_name, 
-                   'f1 ave': f1_avg,
-                   'f1 ave weighted':f1_average_weighted,
-                   'Accuracy':accuracy,
-                   'params':pipeline,
-                   'preprocessing':"clean text"}
-        summrize_table.loc[len(summrize_table)] = new_row
+basic_model_predict_evaluate_clean_df,after_tuning_param_clean_df =train_and_evaluate_for_all_models(
+    summrize_table,
+    X_train_split_clean, 
+    X_test_split_clean, 
+    y_train_split_clean, 
+    y_test_split_clean,
+    "clean text"
+)
 
-        
 basic_model_predict_evaluate_clean_df
-
-X_train_split_temp, X_test_split_temp, y_train_split_temp, y_test_split_temp = train_test_split(df_train_temp['story'], df_train_temp['gender'], test_size=0.2, random_state=0)
-after_tuning_param_clean_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
-for model_name in list(dict_all.keys()):
-    for vector_name in list(Vectorizers_types_dic.keys()):  
-        model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(dict_all[model_name][vector_name][1],dict_all[model_name][vector_name][0],X_train_split_temp,X_test_split_temp,y_train_split_temp,y_test_split_temp)        
-        after_tuning_param_clean_df.loc[vector_name, model_name] = f1_avg
-        new_row = {'models': model_name, 
-                   'Vector type': vector_name, 
-                   'f1 ave': f1_avg,
-                   'f1 ave weighted':f1_average_weighted,
-                   'Accuracy':accuracy,
-                   'params':dict_all[model_name][vector_name],
-                   'preprocessing':"clean text"}
-        summrize_table.loc[len(summrize_table)] = new_row
-
-        
 after_tuning_param_clean_df
 
-
-# **3.1**
-
-# In[598]:
-
-
-text_df1=f'After clean data comparison of training models without tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[0].name})'
-text_df2=f'After clean data comparison of training models with tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[1].name})'
-
-results_comparison_graph(basic_model_predict_evaluate_clean_df,text_df1,"Clean Text, Before tuning params",after_tuning_param_clean_df,text_df2,"Clean Text, After tuning params")
 
 
 # **Without clean the text before**
 
-# In[547]:
+# In[766]:
 
 
-df_train_temp = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
-df_test_temp  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
-df_train_temp['gender'] = df_train_temp['gender'].map({'f': 0, 'm': 1})
+df_train = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
+df_test  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
+df_train['gender'] = df_train['gender'].map({'f': 0, 'm': 1})
 
-print("---------------Basic param evaluate--------------------")
-X_train_split_temp, X_test_split_temp, y_train_split_temp, y_test_split_temp = train_test_split(df_train_temp['story'], df_train_temp['gender'], test_size=0.2, random_state=42)
-basic_model_predict_evaluate_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
-for vector_name in list(Vectorizers_types_dic.keys()):  
-    vectorizer_pre=Vectorizers_types_dic[vector_name]["func"](**Vectorizers_types_dic[vector_name]["params"])
-    
-    for model_name in list(models.keys()):
-        model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(models[model_name],vectorizer_pre,X_train_split_temp,X_test_split_temp,y_train_split_temp,y_test_split_temp)
-        basic_model_predict_evaluate_df.loc[vector_name, model_name] = f1_avg
-        new_row = {'models': model_name, 
-                   'Vector type': vector_name, 
-                   'f1 ave': f1_avg,
-                   'f1 ave weighted':f1_average_weighted,
-                   'Accuracy':accuracy,
-                   'params':pipeline,
-                   'preprocessing':"nothing"}
-        summrize_table.loc[len(summrize_table)] = new_row
-        
+X_train_split, X_test_split, y_train_split, y_test_split = train_test_split(
+    df_train['story'], 
+    df_train['gender'], 
+    test_size=0.2, 
+    random_state=42)
 
-        
+basic_model_predict_evaluate_df,after_tuning_param_df =train_and_evaluate_for_all_models(
+    summrize_table,
+    X_train_split, 
+    X_test_split, 
+    y_train_split, 
+    y_test_split,
+    "nothing"
+)
+
 basic_model_predict_evaluate_df
-
-
-print("------------------------------------------------------")
-
-print("---------------Best param evaluate--------------------")
-
-
-X_train_split_temp, X_test_split_temp, y_train_split_temp, y_test_split_temp = train_test_split(df_train_temp['story'], df_train_temp['gender'], test_size=0.2, random_state=42)
-after_tuning_param_df = pd.DataFrame(index=Vectorizers_types_dic.keys(),columns=models.keys())
-for model_name in list(dict_all.keys()):
-    for vector_name in list(Vectorizers_types_dic.keys()):  
-        model_trained, f1_avg,f1_average_weighted,accuracy = train_and_evaluate_model(dict_all[model_name][vector_name][1],dict_all[model_name][vector_name][0],X_train_split_temp,X_test_split_temp,y_train_split_temp,y_test_split_temp)        
-        after_tuning_param_df.loc[vector_name, model_name] = f1_avg
-        new_row = {'models': model_name, 
-                   'Vector type': vector_name, 
-                   'f1 ave': f1_avg,
-                   'f1 ave weighted':f1_average_weighted,
-                   'Accuracy':accuracy,
-                   'params':dict_all[model_name][vector_name],
-                   'preprocessing':"nothing"}
-        summrize_table.loc[len(summrize_table)] = new_row
 after_tuning_param_df
-print("------------------------------------------------------")
 
 
-# **3.1**
+# **3.1** With clean
 
-# In[599]:
+# In[767]:
 
+
+print("With clean")
+
+text_df1=f'After clean data comparison of training models without tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[0].name})'
+text_df2=f'After clean data comparison of training models with tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[1].name})'
+results_comparison_graph(
+    basic_model_predict_evaluate_clean_df,text_df1,"Clean Text, Before tuning params",
+    after_tuning_param_clean_df,text_df2,"Clean Text, After tuning params")
+
+
+# **3.1** Without clean
+
+# In[768]:
+
+
+print("Without clean")
 
 text_df1=f'Without clean data comparison of training models without tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[0].name})'
 text_df2=f'Without clean data comparison of training models with tuning parameters of the models, optimized parameters based on their F1 average scores ({CrossVal_summarizes_df.iloc[1].name})'
 
-results_comparison_graph(basic_model_predict_evaluate_df,text_df1,"Without clean text, Before tuning params",after_tuning_param_df,text_df2,"Without clean text, After tuning params")
+results_comparison_graph(
+    basic_model_predict_evaluate_df,text_df1,"Without clean text, Before tuning params",
+    after_tuning_param_df,text_df2,"Without clean text, After tuning params")
 
 
 # **3.2**
 
-# In[563]:
+# In[769]:
 
 
 summrize_table = summrize_table.sort_values(by='f1 ave', ascending=False)
 summrize_table = summrize_table.reset_index(drop=True)
-summrize_table = summrize_table.drop(['index', 'level_0'], axis=1)
 summrize_table
 
 
@@ -1010,17 +1024,29 @@ summrize_table
 
 # **4.0**
 
-# In[570]:
+# In[770]:
 
 
 max_value_row = summrize_table[summrize_table['f1 ave'] == summrize_table['f1 ave'].max()]
 max_value_row
 
+# max_value_row = summrize_table.iloc[7]
+# max_value_row = pd.DataFrame([max_value_row])
+# max_value_row
+
 model_select=(max_value_row["params"].values)[0]
 model_select
 
+df_train = pd.read_csv(train_filename, index_col=None, encoding='utf-8')
+df_test  = pd.read_csv(test_filename, index_col=None, encoding='utf-8')
+df_train['gender'] = df_train['gender'].map({'f': 0, 'm': 1})
 
-# In[571]:
+if max_value_row["preprocessing"].values=="clean text":
+    df_train['story']=df_train['story'].apply(clean_text)
+
+
+
+# In[771]:
 
 
 def predict_gender(model_selected,Vectorizer_selected,df_train,df_test):
@@ -1054,7 +1080,7 @@ def predict_gender(model_selected,Vectorizer_selected,df_train,df_test):
 
 # **4.1**
 
-# In[576]:
+# In[772]:
 
 
 df_predicted = pd.DataFrame()
@@ -1070,8 +1096,14 @@ pd.concat([df_predicted.head(5), df_predicted.tail(5)])
 # 
 # Assuming your predicted values are in the `df_predicted` dataframe, you should save you're results as following:
 
-# In[577]:
+# In[773]:
 
 
 df_predicted.to_csv('classification_results.csv',index=False)
+
+
+# In[ ]:
+
+
+
 
